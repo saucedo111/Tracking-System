@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- This meta tag ensures that the website renders correctly across different device sizes, enhancing mobile responsiveness. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Link to the external CSS stylesheet. Uncomment if you wish to customize or add styling. -->
+    <!-- <link rel="stylesheet" href="styles.css">   -->
+
+    <title>Logistics Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="status-view">
+        <div class="connection-status">
+            <span><strong>Database Connection: </strong></span>
+            <span id="dbStatus"> </span>
+            <img id="loadingGif" class="loading-gif" src="loading_100px.gif" alt="Loading...">
+        </div>
+        <div class="init-controls">
+            <button id="resetDemotable">Reset Database</button>
+            <div id="resetResultMsg"></div>
+        </div>
+    </div>
+    <h1>Logistics Management System</h1>
+    <div id="loginSection">
+        <h2>Login</h2>
+        <p>Please enter your userID and type to access your dashboard.</p>
+        <form id="loginForm">
+            <select id="userType" required>
+                <option value="">Select User Type</option>
+                <option value="customer">Customer</option>
+                <option value="supplier">Supplier</option>
+                <option value="carrier">Carrier</option>
+            </select>
+            <input type="number" id="userID" placeholder="Enter User ID" required>
+            <input type="password" id="password" placeholder="Enter Password" required>
+            <br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div id="dashboardSection" style="display: none;">
+        <div class="dashboard-header">
+            <h1>Welcome, <span id="userName"></span>!</h1>
+            <div class="user-badge">
+                <button id="editInfoButton" class="edit-info-button">Edit Info</button>
+                <p><span class="badge-label">User Type:</span> <span id="userTypeDisplay"></span></p>
+                <p><span class="badge-label">User ID:</span> <span id="userIdDisplay"></span></p>
+            </div>
+            <hr>
+        </div>
+
+        <!-- Customer Dashboard -->
+        <div id="customerDashboard" class="user-dashboard" style="display: none;">
+             <div id="editCustomerFormContainer" class="modal">
+                 <div class="modal-content">
+                     <h2>Edit Your Information</h2>
+                     <form id="editCustomerForm">
+                         <input type="hidden" id="editCustomerId">
+                         <div class="form-group">
+                             <label for="editCustomerName">Name:</label>
+                             <input type="text" id="editCustomerName" name="name" required maxlength="20">
+                         </div>
+                         <div class="form-group">
+                             <label for="editCustomerContact">Contact Number:</label>
+                             <input type="number" id="editCustomerContact" name="contactNumber" required maxlength="10">
+                         </div>
+                         <div class="form-group">
+                             <label for="editCustomerAddress">Home Address:</label>
+                             <input type="text" id="editCustomerAddress" name="homeAddress" required maxlength="100">
+                         </div>
+                         <div class="button-group" style="text-align: center;">
+                             <button type="submit">Save Changes</button>
+                             <button type="button" id="cancelEditCustomer">Cancel</button>
+                         </div>
+                     </form>
+                     <div id="editCustomerResultMsg"></div>
+                 </div>
+             </div>
+
+            <div class="dashboard-section">
+                <h2>Create New Order</h2>
+                <form id="insertDemotable">
+                    <div class="form-group">
+                        <label>Order Number:</label>
+                        <input type="number" id="insertNum" placeholder="Enter order number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date:</label>
+                        <input type="date" id="insertDate" placeholder="Enter order date">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Cost:</label>
+                        <input type="number" id="insertTotalCost" placeholder="Enter total cost" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer ID:</label>
+                        <input type="number" id="insertCustomerId" placeholder="Enter customer ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier ID:</label>
+                        <input type="number" id="insertSupplierId" placeholder="Enter supplier ID">
+                    </div>
+                    <button type="submit">Create Order</button>
+                </form>
+                <div id="insertResultMsg"></div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>Filter Your Orders</h2>
+                <form id="filterOrdersForm">
+                    <div class="filter-row">
+                        <select class="logical-operator" disabled>
+                            <option value="NONE" selected>None</option>
+                        </select>
+                        <select class="filter-field">
+                            <option value="">Select Field</option>
+                            <option value="orderNumber">Order Number</option>
+                            <option value="orderDate">Date</option>
+                            <option value="totalCost">Total Cost</option>
+                            <option value="customerID">CustomerID</option>
+                            <option value="supplierID">SupplierID</option>
+                        </select>
+                        <select class="comparison-operator">
+                            <option value="">Select Operator</option>
+                            <option value="=">Equal To (=)</option>
+                            <option value=">">Greater Than (>)</option>
+                            <option value="<">Less Than (<)</option>
+                            <option value=">=">Greater Than or Equal To (>=)</option>
+                            <option value="<=">Less Than or Equal To (<=)</option>
+                            <option value="LIKE">Contains (LIKE)</option>
+                        </select>
+                        <input type="text" class="filter-value" placeholder="Value">
+                    </div>
+                    <div class="filter-row">
+                        <select class="logical-operator">
+                            <option value="NONE" selected>None</option>
+                            <option value="AND">AND</option>
+                            <option value="OR">OR</option>
+                        </select>
+                        <select class="filter-field">
+                            <option value="">Select Field</option>
+                            <option value="orderNumber">Order Number</option>
+                            <option value="orderDate">Date</option>
+                            <option value="totalCost">Total Cost</option>
+                            <option value="customerID">CustomerID</option>
+                            <option value="supplierID">SupplierID</option>
+                        </select>
+                        <select class="comparison-operator">
+                            <option value="">Select Operator</option>
+                            <option value="=">Equal To (=)</option>
+                            <option value=">">Greater Than (>)</option>
+                            <option value="<">Less Than (<)</option>
+                            <option value=">=">Greater Than or Equal To (>=)</option>
+                            <option value="<=">Less Than or Equal To (<=)</option>
+                            <option value="LIKE">Contains (LIKE)</option>
+                        </select>
+                        <input type="text" class="filter-value" placeholder="Value">
+                    </div>
+                    <div class="filter-row">
+                         <select class="logical-operator">
+                            <option value="NONE" selected>None</option>
+                            <option value="AND">AND</option>
+                            <option value="OR">OR</option>
+                        </select>
+                        <select class="filter-field">
+                            <option value="">Select Field</option>
+                            <option value="orderNumber">Order Number</option>
+                            <option value="orderDate">Date</option>
+                            <option value="totalCost">Total Cost</option>
+                            <option value="customerID">CustomerID</option>
+                            <option value="supplierID">SupplierID</option>
+                        </select>
+                        <select class="comparison-operator">
+                            <option value="">Select Operator</option>
+                            <option value="=">Equal To (=)</option>
+                            <option value=">">Greater Than (>)</option>
+                            <option value="<">Less Than (<)</option>
+                            <option value=">=">Greater Than or Equal To (>=)</option>
+                            <option value="<=">Less Than or Equal To (<=)</option>
+                            <option value="LIKE">Contains (LIKE)</option>
+                        </select>
+                        <input type="text" class="filter-value" placeholder="Value">
+                    </div>
+                    <div class="filter-row">
+                         <select class="logical-operator">
+                            <option value="NONE" selected>None</option>
+                            <option value="AND">AND</option>
+                            <option value="OR">OR</option>
+                        </select>
+                        <select class="filter-field">
+                            <option value="">Select Field</option>
+                            <option value="orderNumber">Order Number</option>
+                            <option value="orderDate">Date</option>
+                            <option value="totalCost">Total Cost</option>
+                            <option value="customerID">CustomerID</option>
+                            <option value="supplierID">SupplierID</option>
+                        </select>
+                        <select class="comparison-operator">
+                            <option value="">Select Operator</option>
+                            <option value="=">Equal To (=)</option>
+                            <option value=">">Greater Than (>)</option>
+                            <option value="<">Less Than (<)</option>
+                            <option value=">=">Greater Than or Equal To (>=)</option>
+                            <option value="<=">Less Than or Equal To (<=)</option>
+                            <option value="LIKE">Contains (LIKE)</option>
+                        </select>
+                        <input type="text" class="filter-value" placeholder="Value">
+                    </div>
+                    <button type="submit">Find Orders</button>
+                </form>
+                <div id="filterResults"></div>
+            </div>
+
+            
+        </div>
+
+        <!-- Carrier Dashboard -->
+        <div id="carrierDashboard" class="user-dashboard" style="display: none;">
+            <div class="dashboard-section">
+                <h2>Manage Shipments</h2>
+
+                <form id="deleteShipmentForm">
+                    <label for="trackingNumber">Tracking Number:</label>
+                    <input type="number" id="trackingNumber" name="trackingNumber" required>
+                    <button type="submit">Delete Shipment</button>
+                </form>
+                <div id="deleteResult"></div>
+
+                <div id="shipment-section">
+                    <div class="shipment-filters">
+                        <h3>Shipment Information</h3>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="trackingNumber">Tracking Number</label>
+                            <label><input type="checkbox" value="shipmentStatus">Status</label>
+                            <label><input type="checkbox" value="shippingTime">Shipping Time</label>
+                            <label><input type="checkbox" value="shipmentDate">Date</label>
+                            <label><input type="checkbox" value="supplierID">Supplier ID</label>
+                            <label><input type="checkbox" value="licensePlate">License Plate</label>
+                            <label><input type="checkbox" value="carrierID">Carrier ID</label>
+                        </div>
+                        <button id="select-col">View Shipments</button>
+                    </div>
+                    <div id="result"></div>
+                </div>
+            </div>
+            <div class="dashboard-section">
+                <h2>Shipments with Average Package Size Above Overall Average Package Size</h2>
+                <button id="fetchAboveAvgPackageSizeButton">Fetch Shipments</button>
+                <div id="aboveAvgPackageSizeResult"></div>
+                <div id="updateResult"></div>
+            </div>
+            <div class="dashboard-section">
+                <h2>Find Customers by Order Number</h2>
+                <form id="joinQueryForm">
+                    <div class="form-group">
+                        <label for="orderNumber">Order Number:</label>
+                        <input type="number" id="orderNumber" name="orderNumber" required>
+                    </div>
+                    <button type="submit">Search</button>
+                </form>
+                <div id="joinQueryResult"></div>
+            </div> 
+        </div>  
+
+        <!-- Supplier Dashboard -->
+        <div id="supplierDashboard" class="user-dashboard" style="display: none;">
+            <div class="dashboard-section">
+                <h3>Average Customer Spending</h3>
+                <div id="averageResult"></div>
+                <div class="analytics-controls">
+                    <label><input type="number" value="0" id="minOrder"> <br> Minimum number of orders</label>
+                    <button id="averageSubmit">Generate Report</button>
+                </div>
+            </div>
+            <div class="dashboard-section">
+                <h3>Best Carriers by Area</h3>
+                <div id="aggregateResult"></div>
+                <button id="aggregate-carrier">Generate Report</button>
+            </div>
+            <div class="dashboard-section">
+                <h3>Find Carrier With Given Models</h3>
+                <div id="modelSelect"></div>
+                <button id="modelSelectButton">Select Models</button>
+                <div id="modelResult"></div>
+                <button id="modelResultButton">Generate Report</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!--    <h2>Search Orders</h2>-->
+<!--    <form id="searchOrdersForm">-->
+<!--        <div class="form-group">-->
+<!--            <label for="searchDateFrom">Date From:</label>-->
+<!--            <input type="date" id="searchDateFrom">-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label for="searchDateTo">Date To:</label>-->
+<!--            <input type="date" id="searchDateTo">-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label for="searchCostOperator">Total Cost:</label>-->
+<!--            <select id="searchCostOperator">-->
+<!--                <option value=">">Greater Than</option>-->
+<!--                <option value="<">Less Than</option>-->
+<!--                <option value="=">Equal To</option>-->
+<!--            </select>-->
+<!--            <label for="searchCostValue">Cost Value:</label>-->
+<!--            <input type="number" id="searchCostValue" step="1">-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label>Customer ID:</label>-->
+<!--            <input type="number" id="searchCustomerId">-->
+<!--        </div>-->
+<!--        <button id="selection-order" type="submit">Search Orders</button>-->
+<!--    </form>-->
+<!--    <div id="searchResults"></div>-->
+
+    <!--
+    <h2>Show Demotable</h2>
+    <table id="demotable" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <br><hr><br>
+
+    <br><hr><br>
+
+    <h2> Insert Order</h2>
+    <form id="insertDemotable">
+        orderNumber: <input type="number" id="insertNum" placeholder="Enter order number" required> <br><br>
+        date: <input type="date" id="insertDate" placeholder="Enter order date"> <br><br>
+        totalCost: <input type="number" id="insertTotalCost" placeholder="Enter total cost" required> <br><br>
+        customerID: <input type="number" id="insertCustomerId" placeholder="Enter customer ID" required> <br><br>
+        supplierID: <input type="number" id="insertSupplierId" placeholder="Enter supplier ID"> <br><br>
+
+        <button type="submit"> insert </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <h2>View Shipments</h2>
+    <p>Select which columns you want to see from the <code>Shipment</code> table:</p>
+    <div id="shipment-section" style="display: flex; flex-wrap: wrap; gap: 1rem;">
+        <label>
+            <input type="checkbox" value="trackingNumber" />
+            trackingNumber
+        </label>
+        <label>
+            <input type="checkbox" value="shipmentStatus" />
+            shipmentStatus
+        </label>
+        <label>
+            <input type="checkbox" value="shippingTime" />
+            shippingTime
+        </label>
+        <label>
+            <input type="checkbox" value="shipmentDate" />
+            shipmentDate
+        </label>
+        <label>
+            <input type="checkbox" value="supplierID" />
+            supplierID
+        </label>
+        <label>
+            <input type="checkbox" value="licensePlate" />
+            licensePlate
+        </label>
+        <label>
+            <input type="checkbox" value="carrierID" />
+            carrierID
+        </label>
+    </div>
+    <br/>
+    <button type="submit" id="select-col">Get Selected Columns</button>
+
+    <hr/>
+    <div id="result"></div>
+
+    <br><hr><br>
+
+    <h2>Update Name in DemoTable</h2>
+    <p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
+    <form id="updataNameDemotable">
+        Old Name: <input type="text" id="updateOldName" placeholder="Enter Old Name" required> <br><br>
+        New Name: <input type="text" id="updateNewName" placeholder="Enter New Name" maxlength="20"> <br><br>
+
+        <button type="submit"> update </button> <br>
+    </form>
+    <div id="updateNameResultMsg"></div>
+
+    <br><hr><br>
+
+    <h2>Count the Tuples in DemoTable</h2>
+    <button id="countDemotable"> count </button> <br><br>
+    <div id="countResultMsg"></div> <br> 
+    -->
+    
+
+    <!-- ===================================================================================== -->
+    <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
+    <script src="scripts.js"></script>
+</body>
+</html>
